@@ -58,6 +58,8 @@
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
 /public/build/
+/public/vendors/
+
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
@@ -68,6 +70,7 @@ yarn-error.log
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
+
 /var/
 ###< symfony/framework-bundle ###
 

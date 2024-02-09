@@ -1,28 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="The best place for everything gaming">
-    <meta name="author" content="Command Center">
-    <meta name="keywords"
-          content="blog">
-    <title>{% block title %}Command Center{% endblock %}</title>
-    <link rel="icon"
-          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    <title>{% block title %}{{ "backend.global.welcome"|trans }}{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    {% block metas %}
+        <meta charset="UTF-8">
+    {% endblock %}
     {% block stylesheets %}
-        {{ encore_entry_link_tags('app') }}
     {% endblock %}
 </head>
-<body data-bs-theme="dark" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="compact">
-{% block content %}
+<body {% block bodyclass %}class="" {% endblock %}>
+
+{% block impersionate %}
+    {% if is_granted('IS_IMPERSONATOR') %}
+        <div class="alert alert-warning" style="margin-bottom: 0;">
+            {{ "backend.global.you_are_logged"|trans }} : {{ app.user.username }}
+            <a href="{{ path('app_admin_index',{'_switch_user':'_exit'}) }}">{{ "backend.global.leave_impersonate"|trans }}</a>
+        </div>
+    {% endif %}
 {% endblock %}
-{% block javascripts %}
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    {{ encore_entry_script_tags('app') }}
-{% endblock %}
+{% block body %}{% endblock %}
+{% block javascripts %}{% endblock %}
 </body>
 </html>

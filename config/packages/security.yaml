@@ -1,25 +1,55 @@
 security:
+
+
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+
     providers:
-        users_in_memory: { memory: null }
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: username
+    role_hierarchy:
+        ROLE_SUPERUSER: [ROLE_ADMINISTRATOR , ROLE_EDITORIAL]
+        ROLE_ADMINISTRATOR: [ROLE_ADMIN, ROLE_MANAGER,ROLE_ALLOWED_TO_SWITCH,ROLE_PREMIUM_USER,ROLE_FREE_USER]
+        ROLE_EDITORIAL: [ROLE_ADMIN,ROLE_WRITER,ROLE_PUBLISHER,ROLE_PREMIUM_USER,ROLE_FREE_USER]
+        ROLE_WRITER: [ROLE_ADMIN]
+        ROLE_USER: [ROLE_FREE_USER]
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
+
+            pattern: ^/
+            user_checker: App\Security\UserChecker
             lazy: true
-            provider: users_in_memory
-            form_login:
-                login_path: login
-                check_path: login
-                default_target_path: / # Redirect to home page after login
-            # Other authentication mechanisms can be added here
+            provider: app_user_provider
+            custom_authenticator:
+                - App\Security\LoginFormAuthenticator
+            logout:
+                path: app_logout
+                target: app_login
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 2592000
+            switch_user: true
 
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#the-firewall
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/profile, roles: ROLE_USER }
-
+        - { path: ^/(%app_locales%)/admin/login, roles: PUBLIC_ACCESS}
+        - { path: ^/(%app_locales%)/admin, roles: ROLE_ADMIN}
+        # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
     security:
